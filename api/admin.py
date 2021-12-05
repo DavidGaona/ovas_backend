@@ -2,7 +2,7 @@ from django.contrib import admin
 
 # Register your models here.
 from django.contrib.auth.models import Group
-from api.models import Ova, OvaUser
+from api.models import Ova, OvaUser, Score
 
 admin.site.site_header = 'Administración de Ovas'
 
@@ -26,4 +26,12 @@ class OvaUserAdmin(admin.ModelAdmin):
 
 
 admin.site.register(OvaUser, OvaUserAdmin)
+
+
+class ScoreAdmin(admin.ModelAdmin):
+    list_display = ('user_id', 'ova_id', 'score',)
+    readonly_fields = ('id', 'user_id', 'ova_id', 'score',)
+
+
+admin.site.register(Score, ScoreAdmin)
 # admin.site.unregister(Group)
