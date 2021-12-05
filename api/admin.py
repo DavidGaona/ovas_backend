@@ -1,6 +1,7 @@
 from django.contrib import admin
 
 # Register your models here.
+from django.contrib.auth.models import Group
 from api.models import Ova, OvaUser
 
 admin.site.site_header = 'Administración de Ovas'
@@ -8,11 +9,21 @@ admin.site.site_header = 'Administración de Ovas'
 
 class OvaAdmin(admin.ModelAdmin):
     list_display = ('id', 'creator', 'date', 'language', 'publisher', 'uploader', 'active', 'link',)
-    list_filter = ('date', 'active', 'language', 'creator', 'subject')
+    list_filter = ('active', 'language',)
     readonly_fields = ('id',)
     sortable_by = 'date'
-    search_fields = ('creator', 'language', 'subject', 'title')
+    search_fields = ('creator', 'language', 'subject', 'title',)
 
 
 admin.site.register(Ova, OvaAdmin)
-admin.site.register(OvaUser)
+
+
+class OvaUserAdmin(admin.ModelAdmin):
+    list_display = ('id', 'username', 'email', 'cedula', 'is_active', 'last_login', 'date_joined')
+    list_filter = ('is_active',)
+    readonly_fields = ('id', 'last_login', 'date_joined')
+    exclude = ('is_staff', 'groups', 'user_permissions', 'is_superuser', 'password')
+
+
+admin.site.register(OvaUser, OvaUserAdmin)
+# admin.site.unregister(Group)
