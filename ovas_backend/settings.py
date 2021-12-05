@@ -31,13 +31,15 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'ovas_backend.apps.SuitConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
+    'storages',
+    'boto3',
     'api'
 ]
 
@@ -81,7 +83,7 @@ DATABASES = {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
         "NAME": "ovas",
         "USER": "postgres",
-        "PASSWORD": "postgres452",
+        "PASSWORD": "123456789m",
         "HOST": "localhost",
         "PORT": "5432",
         "ATOMIC_REQUESTS": True
