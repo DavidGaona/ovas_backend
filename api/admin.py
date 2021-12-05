@@ -9,7 +9,7 @@ admin.site.site_header = 'Administración de Ovas'
 class OvaAdmin(admin.ModelAdmin):
     list_display = ('id', 'creator', 'date', 'language', 'publisher', 'uploader', 'active', 'link',)
     list_filter = ('date', 'active', 'language', 'creator', 'subject')
-    readonly_fields = ('id', 'date')
+    readonly_fields = ('id',)
     sortable_by = 'date'
     search_fields = ('creator', 'language', 'subject', 'title')
 
