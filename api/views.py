@@ -50,13 +50,85 @@ def get_ova_score(request, pk):
 
 def get_ova(request, pk):
     import json
+    from django.core.serializers.json import DjangoJSONEncoder
     try:
-        ova = Ova.objects.filter(id=pk).values('id', 'contributor', 'coverage')
+        ova = Ova.objects.filter(id=pk).values('id', 'contributor', 'coverage', 'creator', 'date', 'description',
+                                               'format', 'language', 'publisher', 'relation', 'rights',
+                                               'source', 'subject', 'title', 'type', 'uploader', 'link')
 
         json_response_default = {"payload": []}
         if len(list(ova)):
             respuesta = {"payload": list(ova)}
-            json_response = json.dumps(respuesta)
+            json_response = json.dumps(respuesta, cls=DjangoJSONEncoder)
+            response = HttpResponse(json_response, content_type='application/json', status=200)
+            return response
+
+        response = HttpResponse(json.dumps(json_response_default), content_type='application/json', status=404)
+        return response
+    except:
+        json_response_default = {"payload": []}
+        response = HttpResponse(json.dumps(json_response_default), content_type='application/json', status=500)
+        return response
+
+
+def get_list_ova_per_subject(request, subject):
+    import json
+    from django.core.serializers.json import DjangoJSONEncoder
+    try:
+        ova = Ova.objects.filter(subject__icontains=subject, active=True).\
+            values('id', 'creator', 'date', 'description', 'format',
+                   'language', 'subject', 'title', 'uploader', 'link')
+
+        json_response_default = {"payload": []}
+        if len(list(ova)):
+            respuesta = {"payload": list(ova)}
+            json_response = json.dumps(respuesta, cls=DjangoJSONEncoder)
+            response = HttpResponse(json_response, content_type='application/json', status=200)
+            return response
+
+        response = HttpResponse(json.dumps(json_response_default), content_type='application/json', status=404)
+        return response
+    except:
+        json_response_default = {"payload": []}
+        response = HttpResponse(json.dumps(json_response_default), content_type='application/json', status=500)
+        return response
+
+
+def get_list_ova_per_title(request, title):
+    import json
+    from django.core.serializers.json import DjangoJSONEncoder
+    try:
+        ova = Ova.objects.filter(title__icontains=title, active=True).\
+            values('id', 'creator', 'date', 'description', 'format',
+                   'language', 'subject', 'title', 'uploader', 'link')
+
+        json_response_default = {"payload": []}
+        if len(list(ova)):
+            respuesta = {"payload": list(ova)}
+            json_response = json.dumps(respuesta, cls=DjangoJSONEncoder)
+            response = HttpResponse(json_response, content_type='application/json', status=200)
+            return response
+
+        response = HttpResponse(json.dumps(json_response_default), content_type='application/json', status=404)
+        return response
+    except:
+        json_response_default = {"payload": []}
+        response = HttpResponse(json.dumps(json_response_default), content_type='application/json', status=500)
+        return response
+
+
+def get_list_ova(request):
+    import json
+    from django.core.serializers.json import DjangoJSONEncoder
+    try:
+        ova = Ova.objects.filter(active=True).\
+            values('id', 'creator', 'date', 'description', 'format',
+                   'language', 'subject', 'title', 'uploader', 'link')
+
+        json_response_default = {"payload": []}
+        if len(list(ova)):
+            respuesta = {"payload": list(ova)}
+            json_response = json.dumps(respuesta, cls=DjangoJSONEncoder)
             response = HttpResponse(json_response, content_type='application/json', status=200)
             return response
 
