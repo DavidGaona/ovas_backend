@@ -6,14 +6,20 @@ from django.http import HttpResponse, request
 from .models import Score, Ova, Subject, UserSubject
 
 
-def score_create(request, pk, pk_ova):
+def score_create(request, pk, pk_ova, value):
     import json
     try:
-        score = Score(user_id=pk, ova_id=pk_ova)
-        score.save()
+        score_existe = Score.objects.filter(user_id=pk, ova_id=pk_ova)
+        score = Score()
+        if score_existe.id:
+            score_existe.score = value
+            score_existe.save()
+        else:
+            score = Score(score=value, user_id=pk, ova_id=pk_ova)
+            score.save()
         json_response_default = {"payload": []}
 
-        if score.id:
+        if score.id or score_existe.id:
             respuesta = {"payload": list('Creado')}
             json_response = json.dumps(respuesta)
             response = HttpResponse(json_response, content_type='application/json', status=200)
@@ -55,7 +61,6 @@ def get_ova(request, pk):
         ova = Ova.objects.filter(id=pk).values('id', 'contributor', 'coverage', 'creator', 'date', 'description',
                                                'format', 'language', 'publisher', 'relation', 'rights',
                                                'source', 'subject', 'title', 'type', 'uploader', 'link')
-
         json_response_default = {"payload": []}
         if len(list(ova)):
             respuesta = {"payload": list(ova)}
@@ -75,7 +80,11 @@ def get_list_ova_per_subject(request, subject):
     import json
     from django.core.serializers.json import DjangoJSONEncoder
     try:
-        ova = Ova.objects.filter(subject__icontains=subject, active=True).\
+        subjects = Subject.objects.filter(name__icontains=subject).values('id')
+
+        lista_ids = [item['id'] for item in subjects]
+
+        ova = Ova.objects.filter(subject__in=lista_ids, active=True).\
             values('id', 'creator', 'date', 'description', 'format',
                    'language', 'subject', 'title', 'uploader', 'link')
 

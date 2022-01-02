@@ -2,7 +2,7 @@ from django.contrib import admin
 
 # Register your models here.
 from django.contrib.auth.models import Group
-from api.models import Ova, OvaUser, Score
+from api.models import Ova, OvaUser, Score, Subject
 
 admin.site.site_header = 'Administración de Ovas'
 
@@ -34,4 +34,5 @@ class ScoreAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Score, ScoreAdmin)
-# admin.site.unregister(Group)
+
+admin.site.register(Subject)

@@ -45,6 +45,13 @@ class OvaUser(AbstractUser):
         return self.email
 
 
+class Subject(models.Model):
+    name = models.CharField(max_length=255, unique=True)
+
+    def __str__(self):
+        return self.name
+
+
 class Ova(models.Model):
     contributor = models.CharField(max_length=255)
     coverage = models.CharField(max_length=255)
@@ -56,6 +63,7 @@ class Ova(models.Model):
     publisher = models.CharField(max_length=255)
     relation = models.CharField(max_length=255)
     rights = models.CharField(max_length=255)
+    subject = models.ForeignKey(Subject, on_delete=models.DO_NOTHING)
     source = models.TextField()
     title = models.CharField(max_length=255)
     type = models.CharField(max_length=255)
@@ -70,17 +78,10 @@ class Ova(models.Model):
 class Score(models.Model):
     user_id = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.DO_NOTHING)
     ova_id = models.ForeignKey(Ova, on_delete=models.DO_NOTHING)
-    score = models.FloatField()
+    score = models.IntegerField()
 
     def __str__(self):
         return self.ova_id
-
-
-class Subject(models.Model):
-    name = models.CharField(max_length=255, unique=True)
-
-    def __str__(self):
-        return self.name
 
 
 class UserSubject(models.Model):
