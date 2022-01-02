@@ -7,7 +7,7 @@ from . import views
 app_name = 'api'
 
 urlpatterns = [
-    path('scoreCreate/<int:pk>/<int:pk_ova>/<int:value>', views.score_create, name="scoreCreate"),
+    path('scoreCreate/', views.score_create, name="scoreCreate"),
     path('getOvaScore/<int:pk>', views.get_ova_score, name="getOvaScore"),
     path('getOva/<int:pk>', views.get_ova, name="getOva"),
     path('getListOvaPerSubject/<str:subject>', views.get_list_ova_per_subject, name='getListOvaPerSubject'),

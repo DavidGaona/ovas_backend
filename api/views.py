@@ -3,24 +3,34 @@ from django.shortcuts import render
 # Create your views here.
 from django.views import View
 from django.http import HttpResponse, request
-from .models import Score, Ova, Subject, UserSubject
+from django.views.decorators.csrf import csrf_exempt
+
+from .models import Score, Ova, Subject, UserSubject, OvaUser
 
 
-def score_create(request, pk, pk_ova, value):
+@csrf_exempt
+def score_create(request):
     import json
     try:
-        score_existe = Score.objects.filter(user_id=pk, ova_id=pk_ova)
-        score = Score()
+        body_unicode = request.body.decode('utf-8')
+        body = json.loads(body_unicode)
+
+        usuario = OvaUser.objects.get(id=body['user_id'])
+        ova = Ova.objects.get(id=body['ova_id'])
+
+        score_existe = Score.objects.get(user_id=usuario, ova_id=ova)
+        se_creo = False
         if score_existe.id:
-            score_existe.score = value
+            score_existe.score = body['value']
             score_existe.save()
         else:
-            score = Score(score=value, user_id=pk, ova_id=pk_ova)
+            score = Score(user_id=usuario, ova_id=ova, score=body['value'])
             score.save()
+            se_creo = True
         json_response_default = {"payload": []}
 
-        if score.id or score_existe.id:
-            respuesta = {"payload": list('Creado')}
+        if se_creo or score_existe.id:
+            respuesta = {"payload": 'Creado'}
             json_response = json.dumps(respuesta)
             response = HttpResponse(json_response, content_type='application/json', status=200)
             return response
