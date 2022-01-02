@@ -11,5 +11,9 @@ urlpatterns = [
     path('getOva/<int:pk>', views.get_ova, name="getOva"),
     path('getListOvaPerSubject/<str:subject>', views.get_list_ova_per_subject, name='getListOvaPerSubject'),
     path('getListOvaPerTitle/<str:title>', views.get_list_ova_per_title, name='getListOvaPerTitle'),
-    path('getListOva/', views.get_list_ova, name='getListOva')
+    path('getListOva/', views.get_list_ova, name='getListOva'),
+    path('getSubject/<int:pk>', views.get_subject, name="getSubject"),
+    path('getListSubjectUser/<int:user>', views.get_user_subject_user, name='getListSubjectUser'),
+    path('getListSubjectSubject/<int:subject>', views.get_user_subject_subject, name='getListSubjectSubject')
+
 ]

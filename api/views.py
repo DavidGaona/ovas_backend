@@ -3,7 +3,7 @@ from django.shortcuts import render
 # Create your views here.
 from django.views import View
 from django.http import HttpResponse, request
-from .models import Score, Ova
+from .models import Score, Ova, Subject, UserSubject
 
 
 def score_create(request, pk, pk_ova):
@@ -129,6 +129,69 @@ def get_list_ova(request):
         if len(list(ova)):
             respuesta = {"payload": list(ova)}
             json_response = json.dumps(respuesta, cls=DjangoJSONEncoder)
+            response = HttpResponse(json_response, content_type='application/json', status=200)
+            return response
+
+        response = HttpResponse(json.dumps(json_response_default), content_type='application/json', status=404)
+        return response
+    except:
+        json_response_default = {"payload": []}
+        response = HttpResponse(json.dumps(json_response_default), content_type='application/json', status=500)
+        return response
+
+
+def get_subject(request, pk):
+    import json
+
+    try:
+        subject = Subject.objects.filter(id=pk)
+        json_response_default = {"payload": []}
+
+        if len(list(subject)):
+            respuesta = {"payload": list(subject)}
+            json_response = json.dumps(respuesta)
+            response = HttpResponse(json_response, content_type='application/json', status=200)
+            return response
+
+        response = HttpResponse(json.dumps(json_response_default), content_type='application/json', status=404)
+        return response
+    except:
+        json_response_default = {"payload": []}
+        response = HttpResponse(json.dumps(json_response_default), content_type='application/json', status=500)
+        return response
+
+
+def get_user_subject_user(request, user):
+    import json
+
+    try:
+        user_subjects = UserSubject.objects.filter(user_id=user)
+        json_response_default = {"payload": []}
+
+        if len(list(user_subjects)):
+            respuesta = {"payload": list(user_subjects)}
+            json_response = json.dumps(respuesta)
+            response = HttpResponse(json_response, content_type='application/json', status=200)
+            return response
+
+        response = HttpResponse(json.dumps(json_response_default), content_type='application/json', status=404)
+        return response
+    except:
+        json_response_default = {"payload": []}
+        response = HttpResponse(json.dumps(json_response_default), content_type='application/json', status=500)
+        return response
+
+
+def get_user_subject_subject(request, subject):
+    import json
+
+    try:
+        user_subjects = UserSubject.objects.filter(subject_id=subject)
+        json_response_default = {"payload": []}
+
+        if len(list(user_subjects)):
+            respuesta = {"payload": list(user_subjects)}
+            json_response = json.dumps(respuesta)
             response = HttpResponse(json_response, content_type='application/json', status=200)
             return response
 

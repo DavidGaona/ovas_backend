@@ -57,7 +57,6 @@ class Ova(models.Model):
     relation = models.CharField(max_length=255)
     rights = models.CharField(max_length=255)
     source = models.TextField()
-    subject = models.CharField(max_length=255)
     title = models.CharField(max_length=255)
     type = models.CharField(max_length=255)
     active = models.BooleanField(default=True)
@@ -75,3 +74,18 @@ class Score(models.Model):
 
     def __str__(self):
         return self.ova_id
+
+
+class Subject(models.Model):
+    name = models.CharField(max_length=255, unique=True)
+
+    def __str__(self):
+        return self.name
+
+
+class UserSubject(models.Model):
+    user_id = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    subject_id = models.ForeignKey(Subject, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.pk
