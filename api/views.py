@@ -180,6 +180,27 @@ def get_subject(request, pk):
         return response
 
 
+def get_subjects(request):
+    import json
+
+    try:
+        subject = Subject.objects.filter()
+        json_response_default = {"payload": []}
+
+        if len(list(subject)):
+            respuesta = {"payload": list(subject)}
+            json_response = json.dumps(respuesta)
+            response = HttpResponse(json_response, content_type='application/json', status=200)
+            return response
+
+        response = HttpResponse(json.dumps(json_response_default), content_type='application/json', status=404)
+        return response
+    except:
+        json_response_default = {"payload": []}
+        response = HttpResponse(json.dumps(json_response_default), content_type='application/json', status=500)
+        return response
+
+
 def get_user_subject_user(request, user):
     import json
 
@@ -210,6 +231,69 @@ def get_user_subject_subject(request, subject):
 
         if len(list(user_subjects)):
             respuesta = {"payload": list(user_subjects)}
+            json_response = json.dumps(respuesta)
+            response = HttpResponse(json_response, content_type='application/json', status=200)
+            return response
+
+        response = HttpResponse(json.dumps(json_response_default), content_type='application/json', status=404)
+        return response
+    except:
+        json_response_default = {"payload": []}
+        response = HttpResponse(json.dumps(json_response_default), content_type='application/json', status=500)
+        return response
+
+
+def assign_subject_to_user(request):
+    import json
+
+    try:
+
+        body_unicode = request.body.decode('utf-8')
+        body = json.loads(body_unicode)
+
+        usuario = OvaUser.objects.get(id=body['user_id'])
+        subject = Subject.objects.get(id=body['subject_id'])
+
+        user_subject_existe = UserSubject.objects.get(user_id=usuario, subject_id=subject)
+        se_creo = False
+        if not user_subject_existe.id:
+            user_subject = UserSubject(user_id=usuario, ova_id=subject)
+            user_subject.save()
+            se_creo = True
+
+        json_response_default = {"payload": []}
+
+        if se_creo or user_subject_existe.id:
+            respuesta = {"payload": 'Creado'}
+            json_response = json.dumps(respuesta)
+            response = HttpResponse(json_response, content_type='application/json', status=200)
+            return response
+
+        response = HttpResponse(json.dumps(json_response_default), content_type='application/json', status=404)
+        return response
+    except:
+        json_response_default = {"payload": []}
+        response = HttpResponse(json.dumps(json_response_default), content_type='application/json', status=500)
+        return response
+
+
+def unassign_subject_to_user(request, user, subject_id):
+    import json
+
+    try:
+
+        usuario = OvaUser.objects.get(id=user)
+        subject = Subject.objects.get(id=subject_id)
+
+        user_subject_existe = UserSubject.objects.get(user_id=usuario, subject_id=subject)
+        existe = user_subject_existe.id
+        if existe:
+            user_subject_existe.delete()
+
+        json_response_default = {"payload": []}
+
+        if existe:
+            respuesta = {"payload": 'Desasignado'}
             json_response = json.dumps(respuesta)
             response = HttpResponse(json_response, content_type='application/json', status=200)
             return response

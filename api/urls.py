@@ -14,8 +14,12 @@ urlpatterns = [
     path('getListOvaPerTitle/<str:title>', views.get_list_ova_per_title, name='getListOvaPerTitle'),
     path('getListOva/', views.get_list_ova, name='getListOva'),
     path('getSubject/<int:pk>', views.get_subject, name="getSubject"),
+    path('getSubjects/', views.get_subjects, name="getSubjects"),
     path('getListSubjectUser/<int:user>', views.get_user_subject_user, name='getListSubjectUser'),
     path('getListSubjectSubject/<int:subject>', views.get_user_subject_subject, name='getListSubjectSubject'),
-    path('api-token-auth/', obtain_auth_token, name='api_token_auth')
+    path('api-token-auth/', obtain_auth_token, name='api_token_auth'),
+    path('assignSubjectToUser/', views.assign_subject_to_user, name="assignSubjectToUser"),
+    path('unassignSubjectToUser/<int:user>/<int:subject_id>', views.unassign_subject_to_user,
+         name="unassignSubjectToUser")
 
 ]
