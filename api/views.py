@@ -17,19 +17,26 @@ def score_create(request):
 
         usuario = OvaUser.objects.get(id=body['user_id'])
         ova = Ova.objects.get(id=body['ova_id'])
+        score_update = body['value']
 
-        score_existe = Score.objects.get(user_id=usuario, ova_id=ova)
+        if score_update > 5:
+            score_update = 5
+        elif score_update < 0:
+            score_update = 0
+
+        score_existe_filter = Score.objects.filter(user_id=usuario, ova_id=ova)
         se_creo = False
-        if score_existe.id:
-            score_existe.score = body['value']
+        if score_existe_filter:
+            score_existe = Score.objects.get(user_id=usuario, ova_id=ova)
+            score_existe.score = score_update
             score_existe.save()
         else:
-            score = Score(user_id=usuario, ova_id=ova, score=body['value'])
+            score = Score(user_id=usuario, ova_id=ova, score=score_update)
             score.save()
             se_creo = True
         json_response_default = {"payload": []}
 
-        if se_creo or score_existe.id:
+        if se_creo or score_existe_filter:
             respuesta = {"payload": 'Creado'}
             json_response = json.dumps(respuesta)
             response = HttpResponse(json_response, content_type='application/json', status=200)
