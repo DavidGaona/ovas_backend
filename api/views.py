@@ -261,16 +261,16 @@ def assign_subject_to_user(request):
         usuario = OvaUser.objects.get(id=body['user_id'])
         subject = Subject.objects.get(id=body['subject_id'])
 
-        user_subject_existe = UserSubject.objects.get(user_id=usuario, subject_id=subject)
+        user_subject_existe = UserSubject.objects.filter(user_id=usuario, subject_id=subject)
         se_creo = False
-        if not user_subject_existe.id:
+        if not user_subject_existe:
             user_subject = UserSubject(user_id=usuario, ova_id=subject)
             user_subject.save()
             se_creo = True
 
         json_response_default = {"payload": []}
 
-        if se_creo or user_subject_existe.id:
+        if se_creo or user_subject_existe:
             respuesta = {"payload": 'Creado'}
             json_response = json.dumps(respuesta)
             response = HttpResponse(json_response, content_type='application/json', status=200)
