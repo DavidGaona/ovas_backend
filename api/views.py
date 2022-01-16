@@ -58,7 +58,7 @@ def get_ova_score(request, pk):
         json_response_default = {"payload": []}
 
         if len(list(score_ova)):
-            respuesta = {"payload": list(score_ova)}
+            respuesta = {"payload": score_ova['score__avg']}
             json_response = json.dumps(respuesta)
             response = HttpResponse(json_response, content_type='application/json', status=200)
             return response
