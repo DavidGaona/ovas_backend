@@ -315,6 +315,27 @@ def unassign_subject_to_user(request, user, subject_id):
         return response
 
 
+def get_score_user_ova(request, user, ova):
+    import json
+
+    try:
+        score = Score.objects.filter(user_id=user, ova_id=ova)
+        json_response_default = {"payload": []}
+
+        if len(list(score)):
+            respuesta = {"payload": list(score)}
+            json_response = json.dumps(respuesta)
+            response = HttpResponse(json_response, content_type='application/json', status=200)
+            return response
+
+        response = HttpResponse(json.dumps(json_response_default), content_type='application/json', status=404)
+        return response
+    except:
+        json_response_default = {"payload": []}
+        response = HttpResponse(json.dumps(json_response_default), content_type='application/json', status=500)
+        return response
+
+
 class CustomAuthToken(ObtainAuthToken):
 
     def post(self, request, *args, **kwargs):

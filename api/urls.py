@@ -20,5 +20,6 @@ urlpatterns = [
     path('api-token-auth/', views.CustomAuthToken.as_view(), name='api_token_auth'),
     path('assignSubjectToUser/', views.assign_subject_to_user, name="assignSubjectToUser"),
     path('unassignSubjectToUser/<int:user>/<int:subject_id>', views.unassign_subject_to_user,
-         name="unassignSubjectToUser")
+         name="unassignSubjectToUser"),
+    path('getScoreUserOva/<int:user>/<int:ova>', views.get_score_user_ova, name='getScoreUserOva'),
 ]
