@@ -1,9 +1,11 @@
 from django.shortcuts import render
 
 # Create your views here.
-from django.views import View
-from django.http import HttpResponse, request
+from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
+from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.authtoken.models import Token
+from rest_framework.response import Response
 
 from .models import Score, Ova, Subject, UserSubject, OvaUser
 
@@ -311,3 +313,17 @@ def unassign_subject_to_user(request, user, subject_id):
         json_response_default = {"payload": []}
         response = HttpResponse(json.dumps(json_response_default), content_type='application/json', status=500)
         return response
+
+
+class CustomAuthToken(ObtainAuthToken):
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data,
+                                           context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        token, created = Token.objects.get_or_create(user=user)
+        return Response({
+            'token': token.key,
+            'id': user.pk
+        })

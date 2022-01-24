@@ -22,7 +22,7 @@ class OvaUserAdmin(admin.ModelAdmin):
     list_display = ('id', 'username', 'email', 'cedula', 'is_active', 'last_login', 'date_joined')
     list_filter = ('is_active',)
     readonly_fields = ('id', 'last_login', 'date_joined')
-    exclude = ('is_staff', 'groups', 'user_permissions', 'is_superuser', 'password')
+    exclude = ('is_staff', 'groups', 'user_permissions', 'is_superuser')
 
 
 admin.site.register(OvaUser, OvaUserAdmin)
