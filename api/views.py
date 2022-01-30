@@ -80,6 +80,34 @@ def user_create(request):
         return response
 
 
+@csrf_exempt
+def update_password(request):
+    import json
+    try:
+        body_unicode = request.body.decode('utf-8')
+        body = json.loads(body_unicode)
+
+        json_response_default = {"payload": []}
+
+        usuario = OvaUser.objects.get(id=body['id'])
+
+        if usuario.check_password(body['old_password']):
+            usuario.set_password(body['password'])
+            usuario.save()
+            if usuario.id:
+                respuesta = {"payload": 'Actualizado'}
+                json_response = json.dumps(respuesta)
+                response = HttpResponse(json_response, content_type='application/json', status=200)
+                return response
+
+        response = HttpResponse(json.dumps(json_response_default), content_type='application/json', status=404)
+        return response
+    except:
+        json_response_default = {"payload": []}
+        response = HttpResponse(json.dumps(json_response_default), content_type='application/json', status=500)
+        return response
+
+
 def get_ova_score(request, pk):
     import json
     from django.db.models import Avg
