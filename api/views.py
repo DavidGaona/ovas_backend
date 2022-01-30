@@ -319,15 +319,14 @@ def get_score_user_ova(request, user, ova):
     import json
 
     try:
-        score = Score.objects.filter(user_id=user, ova_id=ova)
         json_response_default = {"payload": []}
+        score = Score.objects.filter(user_id_id=user, ova_id_id=ova).values()
 
-        if len(list(score)):
+        if list(score):
             respuesta = {"payload": list(score)}
             json_response = json.dumps(respuesta)
             response = HttpResponse(json_response, content_type='application/json', status=200)
             return response
-
         response = HttpResponse(json.dumps(json_response_default), content_type='application/json', status=404)
         return response
     except:

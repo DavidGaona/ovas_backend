@@ -80,9 +80,6 @@ class Score(models.Model):
     ova_id = models.ForeignKey(Ova, on_delete=models.DO_NOTHING)
     score = models.IntegerField()
 
-    def __str__(self):
-        return self.ova_id
-
 
 class UserSubject(models.Model):
     user_id = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
