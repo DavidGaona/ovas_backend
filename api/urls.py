@@ -8,6 +8,7 @@ app_name = 'api'
 
 urlpatterns = [
     path('scoreCreate/', views.score_create, name="scoreCreate"),
+    path('userCreate/', views.user_create, name="userCreate"),
     path('getOvaScore/<int:pk>', views.get_ova_score, name="getOvaScore"),
     path('getOva/<int:pk>', views.get_ova, name="getOva"),
     path('getListOvaPerSubject/<str:subject>', views.get_list_ova_per_subject, name='getListOvaPerSubject'),

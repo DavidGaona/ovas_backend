@@ -52,6 +52,34 @@ def score_create(request):
         return response
 
 
+@csrf_exempt
+def user_create(request):
+    import json
+    try:
+        body_unicode = request.body.decode('utf-8')
+        body = json.loads(body_unicode)
+
+        usuario = OvaUser(first_name=body['first_name'], last_name=body['last_name'], email=body['email'],
+                          cedula=body['cedula'], is_active=True)
+        usuario.set_password(body['password'])
+        usuario.save()
+
+        json_response_default = {"payload": []}
+
+        if usuario.id:
+            respuesta = {"payload": 'Creado'}
+            json_response = json.dumps(respuesta)
+            response = HttpResponse(json_response, content_type='application/json', status=200)
+            return response
+
+        response = HttpResponse(json.dumps(json_response_default), content_type='application/json', status=404)
+        return response
+    except:
+        json_response_default = {"payload": []}
+        response = HttpResponse(json.dumps(json_response_default), content_type='application/json', status=500)
+        return response
+
+
 def get_ova_score(request, pk):
     import json
     from django.db.models import Avg
