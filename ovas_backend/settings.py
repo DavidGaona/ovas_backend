@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'storages',
     'boto3',
     'api',
+    'fcm_django',
 ]
 
 REST_FRAMEWORK = {
@@ -152,3 +153,19 @@ AWS_STORAGE_BUCKET_NAME = 'juanmarcos'
 AWS_S3_FILE_OVERWRITE = False
 AWS_QUERYSTRING_AUTH = False
 AWS_DEFAULT_ACL = None
+
+FCM_DJANGO_SETTINGS = {
+     # default: _('FCM Django')
+    "APP_VERBOSE_NAME": "ovas",
+     # true if you want to have only one active device per registered user at a time
+     # default: False
+    "ONE_DEVICE_PER_USER": False,
+     # devices to which notifications cannot be sent,
+     # are deleted upon receiving error response from FCM
+     # default: False
+    "DELETE_INACTIVE_DEVICES": True,
+    # Transform create of an existing Device (based on registration id) into
+                # an update. See the section
+    # "Update of device with duplicate registration ID" for more details.
+    "FCM_SERVER_KEY": "AAAASwjC6PE:APA91bEsxj-s7tUCbdesoYLUb2vl8EXNJfh5TEw3ZWM6LIdaYzUg8BmRQX5WNUIxy6LZGjpKT4pF9_sK5h4yHoynu7r9aRMPgesUGoulRNILZh56UeFj_bXpU6j75QMd2jFY0bRa_xhD",
+}

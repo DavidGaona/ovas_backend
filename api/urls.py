@@ -24,4 +24,5 @@ urlpatterns = [
     path('unassignSubjectToUser/<int:user>/<int:subject_id>', views.unassign_subject_to_user,
          name="unassignSubjectToUser"),
     path('getScoreUserOva/<int:user>/<int:ova>', views.get_score_user_ova, name='getScoreUserOva'),
+    path('guardarToken/', views.guardar_token, name='guardarToken'),
 ]

@@ -1,18 +1,23 @@
 from django.shortcuts import render
 
 # Create your views here.
-from django.http import HttpResponse
+import json
+
+from django.core import serializers
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_http_methods
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 
 from .models import Score, Ova, Subject, UserSubject, OvaUser
 
+from fcm_django.models import FCMDevice
+
 
 @csrf_exempt
 def score_create(request):
-    import json
     try:
         body_unicode = request.body.decode('utf-8')
         body = json.loads(body_unicode)
@@ -54,7 +59,6 @@ def score_create(request):
 
 @csrf_exempt
 def user_create(request):
-    import json
     try:
         body_unicode = request.body.decode('utf-8')
         body = json.loads(body_unicode)
@@ -82,7 +86,6 @@ def user_create(request):
 
 @csrf_exempt
 def update_password(request):
-    import json
     try:
         body_unicode = request.body.decode('utf-8')
         body = json.loads(body_unicode)
@@ -109,7 +112,6 @@ def update_password(request):
 
 
 def get_ova_score(request, pk):
-    import json
     from django.db.models import Avg
     try:
         score_ova = Score.objects.filter(ova_id=pk).aggregate(Avg('score'))
@@ -130,7 +132,6 @@ def get_ova_score(request, pk):
 
 
 def get_ova(request, pk):
-    import json
     from django.core.serializers.json import DjangoJSONEncoder
     try:
         ova = Ova.objects.filter(id=pk).values('id', 'contributor', 'coverage', 'creator', 'date', 'description',
@@ -152,7 +153,6 @@ def get_ova(request, pk):
 
 
 def get_list_ova_per_subject(request, subject):
-    import json
     from django.core.serializers.json import DjangoJSONEncoder
     try:
         subjects = Subject.objects.filter(name__icontains=subject).values('id')
@@ -179,7 +179,6 @@ def get_list_ova_per_subject(request, subject):
 
 
 def get_list_ova_per_title(request, title):
-    import json
     from django.core.serializers.json import DjangoJSONEncoder
     try:
         ova = Ova.objects.filter(title__icontains=title, active=True).\
@@ -202,7 +201,6 @@ def get_list_ova_per_title(request, title):
 
 
 def get_list_ova(request):
-    import json
     from django.core.serializers.json import DjangoJSONEncoder
     try:
         ova = Ova.objects.filter(active=True).\
@@ -225,8 +223,6 @@ def get_list_ova(request):
 
 
 def get_subject(request, pk):
-    import json
-
     try:
         subject = Subject.objects.filter(id=pk)
         json_response_default = {"payload": []}
@@ -246,8 +242,6 @@ def get_subject(request, pk):
 
 
 def get_subjects(request):
-    import json
-
     try:
         subject = Subject.objects.filter()
         json_response_default = {"payload": []}
@@ -267,8 +261,6 @@ def get_subjects(request):
 
 
 def get_user_subject_user(request, user):
-    import json
-
     try:
         user_subjects = UserSubject.objects.filter(user_id=user)
         json_response_default = {"payload": []}
@@ -288,8 +280,6 @@ def get_user_subject_user(request, user):
 
 
 def get_user_subject_subject(request, subject):
-    import json
-
     try:
         user_subjects = UserSubject.objects.filter(subject_id=subject)
         json_response_default = {"payload": []}
@@ -308,9 +298,8 @@ def get_user_subject_subject(request, subject):
         return response
 
 
+@csrf_exempt
 def assign_subject_to_user(request):
-    import json
-
     try:
 
         body_unicode = request.body.decode('utf-8')
@@ -322,7 +311,7 @@ def assign_subject_to_user(request):
         user_subject_existe = UserSubject.objects.filter(user_id=usuario, subject_id=subject)
         se_creo = False
         if not user_subject_existe:
-            user_subject = UserSubject(user_id=usuario, ova_id=subject)
+            user_subject = UserSubject(user_id=usuario, subject_id=subject)
             user_subject.save()
             se_creo = True
 
@@ -343,8 +332,6 @@ def assign_subject_to_user(request):
 
 
 def unassign_subject_to_user(request, user, subject_id):
-    import json
-
     try:
 
         usuario = OvaUser.objects.get(id=user)
@@ -372,8 +359,6 @@ def unassign_subject_to_user(request, user, subject_id):
 
 
 def get_score_user_ova(request, user, ova):
-    import json
-
     try:
         json_response_default = {"payload": []}
         score = Score.objects.filter(user_id_id=user, ova_id_id=ova).values()
@@ -403,3 +388,31 @@ class CustomAuthToken(ObtainAuthToken):
             'token': token.key,
             'id': user.pk
         })
+
+
+@csrf_exempt
+@require_http_methods(['POST'])
+def guardar_token(request):
+    body = request.body.decode('utf-8')
+    bodyDict = json.loads(body)
+
+    token = bodyDict['token']
+
+    existe = FCMDevice.objects.filter(registration_id=token, active=True)
+
+    if len(existe) > 0:
+        return HttpResponseBadRequest(json.dumps({'mensaje': 'el token ya existe'}))
+
+    dispositivo = FCMDevice()
+    dispositivo.registration_id = token
+
+    dispositivo.active = True
+
+    if list(OvaUser.objects.filter(id=bodyDict['id'])):
+        dispositivo.user = OvaUser.objects.get(id=bodyDict['id'])
+
+    try:
+        dispositivo.save()
+        return HttpResponse(json.dumps({'mensaje': 'token guardado'}))
+    except:
+        return HttpResponseBadRequest(json.dumps({'mensaje': 'no se ha podido guardar'}))

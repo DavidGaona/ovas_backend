@@ -5,6 +5,8 @@ from django.conf import settings
 
 from datetime import datetime
 
+from django.db.models.signals import post_save
+
 
 # Create your models here.
 
@@ -87,3 +89,22 @@ class UserSubject(models.Model):
 
     def __str__(self):
         return self.pk
+
+
+def notify_users_per_ova(sender, instance, **kwargs):
+    from fcm_django.models import FCMDevice
+    subject_to_send = instance.subject
+    subjects = UserSubject.objects.filter(subject_id=subject_to_send).values('user_id')
+    lista_ids = [item['user_id'] for item in subjects]
+
+    dispositivos = FCMDevice.objects.filter(user__in=lista_ids, active=True)
+    dispositivos.send_message(
+        message="",
+        title="Ova Nueva Disponible",
+        body="",
+        icon=""
+    )
+    print("llegue al final")
+
+
+post_save.connect(notify_users_per_ova, sender=Ova)
