@@ -99,7 +99,7 @@ def notify_users_per_ova(sender, instance, **kwargs):
 
     dispositivos = FCMDevice.objects.filter(user__in=lista_ids, active=True)
     dispositivos.send_message(
-        message="",
+        message=f"{instance.title} disponible, tema:{instance.subject}",
         title="Ova Nueva Disponible",
         body="",
         icon=""
