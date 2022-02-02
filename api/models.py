@@ -104,7 +104,15 @@ def notify_users_per_ova(sender, instance, **kwargs):
         body="",
         icon=""
     )
-    print("llegue al final")
 
 
 post_save.connect(notify_users_per_ova, sender=Ova)
+
+
+def create_auth_token(sender, instance=None, created=False, **kwargs):
+    from rest_framework.authtoken.models import Token
+    if created:
+        Token.objects.create(user=instance)
+
+
+post_save.connect(create_auth_token, sender=settings.AUTH_USER_MODEL)
