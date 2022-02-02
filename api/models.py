@@ -113,6 +113,8 @@ def create_auth_token(sender, instance=None, created=False, **kwargs):
     from rest_framework.authtoken.models import Token
     if created:
         Token.objects.create(user=instance)
+        instance.set_password(instance.password)
+        instance.save()
 
 
 post_save.connect(create_auth_token, sender=settings.AUTH_USER_MODEL)

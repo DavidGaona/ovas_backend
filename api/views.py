@@ -64,8 +64,7 @@ def user_create(request):
         body = json.loads(body_unicode)
 
         usuario = OvaUser(first_name=body['first_name'], last_name=body['last_name'], email=body['email'],
-                          cedula=body['cedula'], is_active=True)
-        usuario.set_password(body['password'])
+                          cedula=body['cedula'], is_active=True, password=body['password'])
         usuario.save()
 
         json_response_default = {"payload": []}
