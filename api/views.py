@@ -260,10 +260,11 @@ def get_subjects(request):
 
 
 def get_user_subject_user(request, user):
-    try:
-        user_subjects = UserSubject.objects.filter(user_id=user)
-        json_response_default = {"payload": []}
 
+    try:
+        user_subjects = UserSubject.objects.filter(user_id=user).values()
+        json_response_default = {"payload": []}
+        print(user_subjects)
         if len(list(user_subjects)):
             respuesta = {"payload": list(user_subjects)}
             json_response = json.dumps(respuesta)
