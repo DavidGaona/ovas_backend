@@ -330,6 +330,7 @@ def assign_subject_to_user(request):
         return response
 
 
+@csrf_exempt
 def unassign_subject_to_user(request, user, subject_id):
     try:
 
