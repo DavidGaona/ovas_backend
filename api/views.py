@@ -242,7 +242,7 @@ def get_subject(request, pk):
 
 def get_subjects(request):
     try:
-        subject = Subject.objects.filter()
+        subject = Subject.objects.filter().values()
         json_response_default = {"payload": []}
 
         if len(list(subject)):
